@@ -45,7 +45,7 @@ void MX_FATFS_Init(void)
 		if(retUSER != FR_OK)
 		{
 			retUSER = 2;
-			f_mkfs((TCHAR const*)USERPath, 0, 0,workbuf,4096);		
+			f_mkfs((TCHAR const*)USERPath, 0, 0,workbuf,4096*4);		
 		}
 		else
 		{

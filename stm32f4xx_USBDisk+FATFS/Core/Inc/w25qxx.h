@@ -39,10 +39,10 @@
   * @brief  W25QXX Configuration  
   */  
 									/* W25Q32 */
-#define W25QXXXX_FLASH_SIZE                  0x0400000 /* 32 MBits => 4MBytes */
-#define W25QXXXX_SECTOR_COUNT                0x40      /* 64 sectors of 64KBytes */
+#define W25QXXXX_FLASH_SIZE                  0x1000000 /* 32 MBits => 4MBytes */
+#define W25QXXXX_SECTOR_COUNT                0x100     /* 64 sectors of 64KBytes */
 #define W25QXXXX_SECTOR_SIZE                 0x10000   /* 64 sectors of 64KBytes */
-#define W25QXXXX_SUBSECTOR_COUNT             0x0400    /* 1024 subsectors of 4kBytes */
+#define W25QXXXX_SUBSECTOR_COUNT             0x1000    /* 1024 subsectors of 4kBytes */
 #define W25QXXXX_SUBSECTOR_SIZE              0x1000    /* 1024 subsectors of 4kBytes */
 #define W25QXXXX_PAGE_SIZE                   0x100     /* 16384 pages of 256 bytes */
 
