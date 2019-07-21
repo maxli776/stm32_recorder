@@ -29,6 +29,8 @@
 #include "uart.h"
 
 
+
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
@@ -49,6 +51,9 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_RTC_Init();
+  
+  MX_DMA_Init();
+  MX_USART1_UART_Init();
 
   /* Infinite loop */
   while (1)
@@ -57,7 +62,7 @@ int main(void)
     static uint16_t   time;
     static uint8_t    timeflag;
     static uint8_t    timecount;
-		static GPIO_PinState    usbDetectRes;
+    static GPIO_PinState    usbDetectRes;
 
     usbDetectRes = HAL_GPIO_ReadPin(USBDetct_GPIO_Port,USBDetct_Pin);
 
@@ -66,6 +71,7 @@ int main(void)
       if (UartHandle.UsbDetectFlag == 0)
       {
         UartHandle.UsbDetectFlag = 1;
+        HAL_UART_MspDeInit(&huart1);
         MX_USB_DEVICE_Init();
       }
     }
