@@ -40,6 +40,20 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+  /*
+  static GPIO_PinState    usbDetectRes;
+  usbDetectRes = HAL_GPIO_ReadPin(USBDetct_GPIO_Port,USBDetct_Pin);
+
+  if (usbDetectRes == GPIO_PIN_RESET)
+  {
+    if (UartHandle.UsbDetectFlag == 0)
+    {
+      UartHandle.UsbDetectFlag = 1;
+      HAL_UART_MspDeInit(&huart1);
+      MX_USB_DEVICE_Init();
+    }
+  }*/
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -51,60 +65,30 @@ int main(void)
   MX_SPI1_Init();
   MX_FATFS_Init();
   MX_RTC_Init();
-  
   MX_DMA_Init();
   MX_USART1_UART_Init();
+  //MX_USB_DEVICE_Init();
+  HAL_UART_Receive_DMA(&huart1,&UartHandle.UartRxData,1);
 
   /* Infinite loop */
   while (1)
   {
-    static uint8_t    pwmset;
-    static uint16_t   time;
-    static uint8_t    timeflag;
-    static uint8_t    timecount;
-    static GPIO_PinState    usbDetectRes;
-
-    usbDetectRes = HAL_GPIO_ReadPin(USBDetct_GPIO_Port,USBDetct_Pin);
-
-    if (usbDetectRes == GPIO_PIN_RESET)
+    if(UartHandle.UartRx_UnprocessedCount > 0)
     {
-      if (UartHandle.UsbDetectFlag == 0)
+      uint32_t byteswritten;
+      
+      f_write(&USERFile, &UartHandle.UartRxBuffer[UartHandle.UartRxBuffer_ProcessorIndex], 1, (void *)&byteswritten);
+      
+      UartHandle.UartRx_UnprocessedCount --;
+      UartHandle.UartRxBuffer_ProcessorIndex ++;
+      
+      if(UartHandle.UartRxBuffer_ProcessorIndex >= UART_RX_BUFFER_SIZE)
       {
-        UartHandle.UsbDetectFlag = 1;
-        HAL_UART_MspDeInit(&huart1);
-        MX_USB_DEVICE_Init();
+        UartHandle.UartRxBuffer_ProcessorIndex = 0;
       }
+      
+      HAL_GPIO_TogglePin(C13_GPIO_Port,C13_Pin);
     }
-    
-    /* ºôÎüµÆ */
-    if(timeflag == 0)
-    {
-      time ++;
-      if(time >= 1600) 
-        timeflag = 1;
-    }
-    else
-    {
-      time --;
-      if(time == 0) 
-        timeflag = 0;
-    }
-
-    /* Õ¼¿Õ±ÈÉèÖÃ */
-    pwmset = time/80;
-
-    /* 20ms Âö¿í */
-    if(timecount > 20) 
-      timecount = 0;
-    else 
-      timecount ++;
-
-    if(timecount >= pwmset ) 
-      HAL_GPIO_WritePin(C13_GPIO_Port,C13_Pin,GPIO_PIN_SET);
-    else 
-      HAL_GPIO_WritePin(C13_GPIO_Port,C13_Pin,GPIO_PIN_RESET);
-
-    HAL_Delay(0); // 1ms
   }
 }
 

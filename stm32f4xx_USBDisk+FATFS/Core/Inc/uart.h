@@ -4,9 +4,19 @@
 
 #include "stm32f4xx_hal.h"
 
+#define UART_RX_BUFFER_SIZE   1024
+
+
 typedef struct
 {
   unsigned int UsbDetectFlag;
+  unsigned char UartRxData;
+  unsigned char UartRxBuffer[UART_RX_BUFFER_SIZE];
+  unsigned int UartRxBuffer_DockerIndex;
+  unsigned int UartRxBuffer_ProcessorIndex;
+  unsigned int UartRx_UnprocessedCount;
+  unsigned int OverRunFlag;
+  unsigned int OverRunCount;
 }UartProcessHandle_TypeDef;
 
 

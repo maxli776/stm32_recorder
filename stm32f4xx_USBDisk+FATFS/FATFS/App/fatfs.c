@@ -39,23 +39,27 @@ void MX_FATFS_Init(void)
   /* additional user code for init */  
   uint32_t byteswritten;                     /* File write/read counts */
   uint8_t wtext[] = "This is STM32 working with FatFs\r\n STM32F4xxºËÐÄ°å Design By Zhuyix  \r"; /* File write buffer */
-	if(retUSER == FR_OK)
-	{
-		retUSER = f_mount(&USERFatFS,(TCHAR const*)USERPath,1) ;
-		if(retUSER != FR_OK)
-		{
-			retUSER = 2;
-			f_mkfs((TCHAR const*)USERPath, 0, 0,workbuf,4096*4);		
-		}
-		else
-		{
-			if(f_open(&USERFile, "STM32ºËÐÄ°å.txt", FA_CREATE_ALWAYS | FA_WRITE) == FR_OK)
+  if(retUSER == FR_OK)
+  {
+    retUSER = f_mount(&USERFatFS,(TCHAR const*)USERPath,1) ;
+    if(retUSER != FR_OK)
+    {
+      retUSER = 2;
+      f_mkfs((TCHAR const*)USERPath, 0, 0,workbuf,4096*4);
+    }
+    else
+    {
+      if(f_open(&USERFile, "data.bin", FA_CREATE_ALWAYS | FA_WRITE) == FR_OK)
+      {
+        //f_write(&USERFile, wtext, sizeof(wtext), (void *)&byteswritten);
+        //f_close(&USERFile);
+      }
+			else
 			{
-				f_write(&USERFile, wtext, sizeof(wtext), (void *)&byteswritten);
-				f_close(&USERFile);
+				while(1);
 			}
-		}
-	}   
+    }
+  }   
   /* USER CODE END Init */
 }
 

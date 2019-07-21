@@ -15,7 +15,7 @@ void MX_USART1_UART_Init(void)
 {
 
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 921600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -62,7 +62,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart1_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_usart1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_usart1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart1_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart1_rx.Init.Mode = DMA_CIRCULAR;
     hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
     hdma_usart1_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_rx) != HAL_OK)
@@ -137,6 +137,30 @@ void MX_DMA_Init(void)
   HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if(huart->Instance==USART1)
+  {
+    if(UartHandle.UartRx_UnprocessedCount + 1 >= UART_RX_BUFFER_SIZE)
+    {
+      UartHandle.OverRunFlag = 1;
+      UartHandle.OverRunCount ++;
+    }
+    else
+    {
+      UartHandle.UartRx_UnprocessedCount ++;
+      UartHandle.OverRunFlag = 0;
+      UartHandle.UartRxBuffer[UartHandle.UartRxBuffer_DockerIndex] = UartHandle.UartRxData;
+      UartHandle.UartRxBuffer_DockerIndex ++;
+      if(UartHandle.UartRxBuffer_DockerIndex >= UART_RX_BUFFER_SIZE)
+      {
+        UartHandle.UartRxBuffer_DockerIndex = 0;
+      }
+    }
+  }
+}
+
 
 
 
