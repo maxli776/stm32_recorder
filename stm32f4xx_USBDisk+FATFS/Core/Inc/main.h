@@ -58,10 +58,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define C13_Pin GPIO_PIN_13
-#define C13_GPIO_Port GPIOC
-#define F_CS_Pin GPIO_PIN_4
-#define F_CS_GPIO_Port GPIOA
+
+#define USBDetct_Pin              GPIO_PIN_10
+#define USBDetct_GPIO_Port        GPIOB
+#define C13_Pin                   GPIO_PIN_13
+#define C13_GPIO_Port             GPIOC
+#define F_CS_Pin                  GPIO_PIN_4
+#define F_CS_GPIO_Port            GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
