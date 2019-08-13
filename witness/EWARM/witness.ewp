@@ -1056,6 +1056,9 @@
                 <name>$PROJ_DIR$\..\Src\fatfs.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Src\fifo.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Src\freertos.c</name>
             </file>
             <file>
@@ -1069,6 +1072,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Src\uart.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Src\usb_device.c</name>
