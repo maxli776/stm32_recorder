@@ -2,7 +2,7 @@
 #define _FIFO_H
 
 
-#define FIFO_RX_MAX_SIZE  1024
+#define FIFO_RX_MAX_SIZE  4096
 
 enum
 {

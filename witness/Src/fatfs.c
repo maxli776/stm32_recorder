@@ -16,7 +16,7 @@
   ******************************************************************************
   */
 
-#include "fatfs.h"
+#include "global.h"
 
 SD_HandleTypeDef hsd;
 DMA_HandleTypeDef hdma_sdio_rx;
@@ -37,6 +37,7 @@ void MX_FATFS_Init(void)
   FRESULT res;
   uint32_t byteswritten, bytesread;                     /* File write/read counts */
   uint8_t wtext[] = "This is STM32 working with FatFs";
+  static int test_count = 0;
   
   /*## FatFS: Link the SD driver ###########################*/
   if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
@@ -57,33 +58,58 @@ void MX_FATFS_Init(void)
       }
       else
       { 
-#if 0
+
         /*##-4- Create and Open a new text file object with write access #####*/
-        if(f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+        if((res = f_open(&SDFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE)) != FR_OK)
         {
           /* 'STM32.TXT' file Open for write Error */
           Error_Handler();
         }
         else
         {
-          /*##-5- Write data to the text file ################################*/
-          res = f_write(&SDFile, wtext, sizeof(wtext), (void *)&byteswritten);
-          
-          if((byteswritten == 0) || (res != FR_OK))
+          HAL_UART_Receive_DMA(&huart1,&uart1_fifo.rec,1);
+
+          while(1)
           {
-            /* 'STM32.TXT' file Write or EOF Error */
-            Error_Handler();
-          }
-          else
-          {
-            /*##-6- Close the open text file #################################*/
-            f_close(&SDFile);
+            if(uart1_fifo.bufferFullFlag != BUFFER_NONE_FULL)
+            {
+              test_count ++;
+              if(uart1_fifo.bufferFullFlag == BUFFER_A_FULL)
+              {
+                /*##-5- Write data to the text file ################################*/
+                res = f_write(&SDFile, &uart1_fifo.rxBuf_A, FIFO_RX_MAX_SIZE, (void *)&byteswritten);
+                if((byteswritten == 0) || (res != FR_OK))
+                {
+                  /* 'STM32.TXT' file Write or EOF Error */
+                  Error_Handler();
+                }
+                uart1_fifo.bufferFullFlag = BUFFER_NONE_FULL;
+              }
+              else if(uart1_fifo.bufferFullFlag == BUFFER_B_FULL)
+              {
+                res = f_write(&SDFile, &uart1_fifo.rxBuf_B, FIFO_RX_MAX_SIZE, (void *)&byteswritten);
+                if((byteswritten == 0) || (res != FR_OK))
+                {
+                  /* 'STM32.TXT' file Write or EOF Error */
+                  Error_Handler();
+                }
+                uart1_fifo.bufferFullFlag = BUFFER_NONE_FULL;
+              }
+
+              if(test_count > 10)
+              {
+                f_close(&SDFile);
+                FATFS_UnLinkDriver(SDPath);
+                break;
+              }
+            }
           }
         }
-#endif
       }
     }
   }
+
+  while(1);
   
   /*##-11- Unlink the RAM disk I/O driver ####################################*/
   //FATFS_UnLinkDriver(SDPath);

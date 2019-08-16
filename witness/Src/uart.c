@@ -38,7 +38,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
       if(uart1_fifo.BufferIndex >= FIFO_RX_MAX_SIZE)
       {
-        if(uart1_fifo.bufferFullFlag != BUFFER_NONE_FULL)
+        if(uart1_fifo.bufferFullFlag != BUFFER_A_FULL)
         {
           uart1_fifo.errorCode = FIFO_RES_ERROR_BUFA_OVERRUN;
         }    
@@ -57,7 +57,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
       if(uart1_fifo.BufferIndex >= FIFO_RX_MAX_SIZE)
       {
-        if(uart1_fifo.bufferFullFlag != BUFFER_NONE_FULL)
+        if(uart1_fifo.bufferFullFlag != BUFFER_B_FULL)
         {
           uart1_fifo.errorCode = FIFO_RES_ERROR_BUFB_OVERRUN;
         }    
